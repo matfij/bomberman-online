@@ -64,16 +64,15 @@ export function drawFrameOrigin(
     );
 }
 
-export function drawTile(
-    context: CanvasRenderingContext2D,
+export const drawTile = (
+    context: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D,
     image: HTMLImageElement,
     tile: number,
     destX: number,
     destY: number,
     tileSize = 16,
-) {
+): void => {
     const noTilesWidth = Math.floor(image.width / tileSize);
-
     context.drawImage(
         image,
         (tile % noTilesWidth) * tileSize,

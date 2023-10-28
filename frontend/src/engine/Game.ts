@@ -3,6 +3,7 @@ import { getContext } from './context';
 import { Camera } from './Camera';
 import { Scene } from './definitions/interfaces';
 import { TimeFrame } from './definitions/types';
+import { BattleScene } from '../game/scenes/BattleScene';
 
 export class Game {
     context: CanvasRenderingContext2D;
