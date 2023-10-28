@@ -33,7 +33,7 @@ export type Tile = {
 
 export type FrameDimensions = readonly [number, number, number, number];
 export type $FrameOrigin = readonly [number, number];
-export type FrameData = readonly [FrameDimensions, FrameOrigin]
+export type FrameData = readonly [FrameDimensions, $FrameOrigin]
 export type FrameDataMap = Map<string, FrameData>;
 
 export type AnimationFrame = readonly [string, number];

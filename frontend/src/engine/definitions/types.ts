@@ -38,3 +38,8 @@ export type TimeFrame = {
     previous: number;
     secondsPassed: number;
 };
+
+export type SoundSettings = {
+    volume: number;
+    loop: boolean;
+};

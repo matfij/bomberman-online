@@ -1,8 +1,8 @@
-import { pollGamepads, registerGamepadEvents, registerKeyEvents } from './inputHandler.js';
-import { getContext } from './context.js';
-import { Camera } from './Camera.js';
-import { Scene } from './definitions/interfaces.js';
-import { TimeFrame } from './definitions/types.js';
+import { pollGamepads, registerGamepadEvents, registerKeyEvents } from './inputHandler';
+import { getContext } from './context';
+import { Camera } from './Camera';
+import { Scene } from './definitions/interfaces';
+import { TimeFrame } from './definitions/types';
 
 export class Game {
     context: CanvasRenderingContext2D;

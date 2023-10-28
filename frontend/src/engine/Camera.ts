@@ -1,4 +1,4 @@
-import { SCREEN_WIDTH, SCREEN_HEIGHT } from 'game/constants/game.js';
+import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../game/constants/game';
 import { Dimensions, Point } from './definitions/types';
 
 export class Camera {

@@ -1,5 +1,5 @@
-import { Circle, Point, Rect } from '../definitions/types.js';
-import { distance } from './maths.js';
+import { Circle, Point, Rect } from '../definitions/types';
+import { distance } from './maths';
 
 export const pointRectangleOverlap = (point: Point, rect: Rect): boolean => {
     return (
