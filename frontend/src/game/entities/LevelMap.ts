@@ -20,7 +20,7 @@ export class LevelMap extends GameEntity {
         for (let row = 0; row < this.tileMap.length; row++) {
             for (let col = 0; col < this.tileMap[0].length; col++) {
                 const tile = this.tileMap[row][col];
-                this.updateStageImageAt(col, row, tile);
+                this.updateStageImageAt(row, col, tile);
             }
         }
     }
@@ -30,11 +30,9 @@ export class LevelMap extends GameEntity {
         drawTile(context, this.image, tile, row * TILE_SIZE, col * TILE_SIZE, TILE_SIZE);
     }
 
-    update(time: TimeFrame, context: CanvasRenderingContext2D, camera: Camera) {
-        // Add your main update calls here
-    }
+    update = (time: TimeFrame, context: CanvasRenderingContext2D, camera: Camera) => undefined;
 
     draw(context: CanvasRenderingContext2D, camera: Camera) {
-        // Add your main draw calls here
+        context.drawImage(this.stageImage, -camera.position.x, -camera.position.y);
     }
 }

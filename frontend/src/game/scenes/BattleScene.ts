@@ -7,7 +7,7 @@ export class BattleScene extends Scene {
 
     constructor(camera: Camera) {
         super();
-        // camera.startPosition = { x: 1, y: 1 };
+        camera.position = { x: 8, y: -24 };
         this.stage = new LevelMap();
     }
 
