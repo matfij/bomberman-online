@@ -8,6 +8,6 @@ export class BombermanGame extends Game {
 
     constructor() {
         super('body', SCREEN_WIDTH, SCREEN_HEIGHT);
-        this.scene = new BattleScene(this.camera) as unknown as Scene;
+        this.scene = new BattleScene(this.frameTime, this.camera) as unknown as Scene;
     }
 }
