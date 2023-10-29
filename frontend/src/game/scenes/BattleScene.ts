@@ -1,13 +1,16 @@
 import { Camera } from '../../engine/Camera';
 import { Scene } from '../../engine/Scene';
+import { BattleHud } from '../entities/BattleHud';
 import { LevelMap } from '../entities/LevelMap';
 
 export class BattleScene extends Scene {
+    private hud: BattleHud;
     private stage: LevelMap;
 
     constructor(camera: Camera) {
         super();
         camera.position = { x: 8, y: -24 };
+        this.hud = new BattleHud({ x: 0, y: 0 });
         this.stage = new LevelMap();
     }
 
@@ -16,6 +19,7 @@ export class BattleScene extends Scene {
     }
 
     draw(context: CanvasRenderingContext2D, camera: Camera) {
+        this.hud.draw(context);
         this.stage.draw(context, camera);
     }
 
