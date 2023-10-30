@@ -3,6 +3,8 @@ export type Point = {
     y: number;
 };
 
+export type Velocity = Point;
+
 export type Rect = {
     x: number;
     y: number;
