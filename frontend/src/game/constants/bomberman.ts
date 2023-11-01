@@ -1,5 +1,5 @@
 import { FrameOrigin } from '../../engine/definitions/types';
-import { DIRECTION } from './entities';
+import { Direction } from './entities';
 
 export const WALK_SPEED = 40;
 
@@ -156,25 +156,25 @@ export const BOMBERMAN_FRAMES = new Map<string, FrameOrigin>([
 
 export const BOMBERMAN_ANIMATIONS = {
     moveAnimations: {
-        [DIRECTION.LEFT]: [
+        [Direction.Left]: [
             ['idle-side', 8],
             ['move-side-1', 8],
             ['idle-side', 8],
             ['move-side-2', 8],
         ],
-        [DIRECTION.RIGHT]: [
+        [Direction.Right]: [
             ['idle-side', 8],
             ['move-side-1', 8],
             ['idle-side', 8],
             ['move-side-2', 8],
         ],
-        [DIRECTION.UP]: [
+        [Direction.Up]: [
             ['idle-up', 8],
             ['move-up-1', 8],
             ['idle-up', 8],
             ['move-up-2', 8],
         ],
-        [DIRECTION.DOWN]: [
+        [Direction.Down]: [
             ['idle-down', 8],
             ['move-down-1', 8],
             ['idle-down', 8],

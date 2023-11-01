@@ -4,20 +4,22 @@ import { drawFrameOrigin } from '../../engine/context';
 import { Point, TimeFrame, Velocity } from '../../engine/definitions/types';
 import { isDown, isLeft, isRight, isUp } from '../../engine/inputHandler';
 import { BOMBERMAN_ANIMATIONS, BOMBERMAN_FRAMES, BombermanState, WALK_SPEED } from '../constants/bomberman';
-import { DIRECTION } from '../constants/entities';
+import { COUNTER_DIRECTIONS_LOOKUP, Direction, MOVEMENT_LOOKUP } from '../constants/entities';
 import { FRAME_TIME, TILE_SIZE } from '../constants/game';
-import { State } from '../definitions/interfaces';
+import { COLLISION_MAP, TileType } from '../constants/levelData';
+import { State, Tile } from '../definitions/interfaces';
 import { isZero } from '../utils/movement';
 
 export class Bomberman extends GameEntity {
     readonly CONTROL_ID = 0;
     image: HTMLImageElement;
-    direction = DIRECTION.DOWN;
-    baseSpeedTime = 1.2;
-    speedultiplier = 1;
+    direction = Direction.Down;
+    baseSpeedTime = WALK_SPEED;
+    speedultiplier = 1.2;
     animation = BOMBERMAN_ANIMATIONS.moveAnimations[this.direction];
     currentState?: State<BombermanState>;
     states: Record<BombermanState, State<BombermanState>>;
+    collisionMap = [...COLLISION_MAP];
 
     constructor(position: Point, time: TimeFrame) {
         super({ x: position.x * TILE_SIZE + TILE_SIZE / 2, y: position.y * TILE_SIZE + TILE_SIZE / 2 });
@@ -69,17 +71,102 @@ export class Bomberman extends GameEntity {
         return vel;
     };
 
-    private getMovement(): [string, Velocity] {
+    private getMovement(): [Direction, Velocity] {
         if (isLeft(this.CONTROL_ID)) {
-            return [DIRECTION.LEFT, { x: -WALK_SPEED, y: 0 }];
+            return this.checkCollisions(Direction.Left);
         } else if (isRight(this.CONTROL_ID)) {
-            return [DIRECTION.RIGHT, { x: WALK_SPEED, y: 0 }];
+            return this.checkCollisions(Direction.Right);
         } else if (isUp(this.CONTROL_ID)) {
-            return [DIRECTION.UP, { x: 0, y: -WALK_SPEED }];
+            return this.checkCollisions(Direction.Up);
         } else if (isDown(this.CONTROL_ID)) {
-            return [DIRECTION.DOWN, { x: 0, y: WALK_SPEED }];
+            return this.checkCollisions(Direction.Down);
         }
         return [this.direction, { x: 0, y: 0 }];
+    }
+
+    private checkCollisions(direction: Direction): [Direction, Point] {
+        const collisionCoords = this.getCollisionCoords(direction);
+        if (this.shouldBlockMovement(collisionCoords)) {
+            return [direction, { x: 0, y: 0 }];
+        }
+        const counterDirections = COUNTER_DIRECTIONS_LOOKUP[direction];
+        if (this.getCollisionTile(collisionCoords[0]) >= TileType.Wall) {
+            return [counterDirections[0], { ...MOVEMENT_LOOKUP[counterDirections[0]] }];
+        }
+        if (this.getCollisionTile(collisionCoords[1]) >= TileType.Wall) {
+            return [counterDirections[1], { ...MOVEMENT_LOOKUP[counterDirections[1]] }];
+        }
+        return [direction, { ...MOVEMENT_LOOKUP[direction] }];
+    }
+
+    private getCollisionCoords(direction: Direction): [Tile, Tile] {
+        switch (direction) {
+            case Direction.Up:
+                return [
+                    {
+                        row: Math.floor((this.position.y - 9) / TILE_SIZE),
+                        column: Math.floor((this.position.x - 8) / TILE_SIZE),
+                    },
+                    {
+                        row: Math.floor((this.position.y - 9) / TILE_SIZE),
+                        column: Math.floor((this.position.x + 7) / TILE_SIZE),
+                    },
+                ];
+            case Direction.Left:
+                return [
+                    {
+                        row: Math.floor((this.position.y - 8) / TILE_SIZE),
+                        column: Math.floor((this.position.x - 9) / TILE_SIZE),
+                    },
+                    {
+                        row: Math.floor((this.position.y + 7) / TILE_SIZE),
+                        column: Math.floor((this.position.x - 9) / TILE_SIZE),
+                    },
+                ];
+            case Direction.Right:
+                return [
+                    {
+                        row: Math.floor((this.position.y - 8) / TILE_SIZE),
+                        column: Math.floor((this.position.x + 8) / TILE_SIZE),
+                    },
+                    {
+                        row: Math.floor((this.position.y + 7) / TILE_SIZE),
+                        column: Math.floor((this.position.x + 8) / TILE_SIZE),
+                    },
+                ];
+            case Direction.Down:
+                return [
+                    {
+                        row: Math.floor((this.position.y + 8) / TILE_SIZE),
+                        column: Math.floor((this.position.x - 8) / TILE_SIZE),
+                    },
+                    {
+                        row: Math.floor((this.position.y + 8) / TILE_SIZE),
+                        column: Math.floor((this.position.x + 7) / TILE_SIZE),
+                    },
+                ];
+        }
+    }
+
+    private shouldBlockMovement(collisionCoords: [Tile, Tile]) {
+        const tileCoordsMatch =
+            collisionCoords[0].column === collisionCoords[1].column &&
+            collisionCoords[0].row === collisionCoords[1].row;
+        const collisionTiles = [
+            this.getCollisionTile(collisionCoords[0]),
+            this.getCollisionTile(collisionCoords[1]),
+        ];
+        if (
+            (tileCoordsMatch && collisionTiles[0] >= TileType.Wall) ||
+            (collisionTiles[0] >= TileType.Wall && collisionTiles[1] >= TileType.Wall)
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    private getCollisionTile(tile: Tile) {
+        return COLLISION_MAP[tile.row][tile.column];
     }
 
     private changeState(newState: BombermanState, time: TimeFrame) {
@@ -96,8 +183,8 @@ export class Bomberman extends GameEntity {
     }
 
     private updatePosition(time: TimeFrame) {
-        this.position.x += (this.velocity.x * this.baseSpeedTime * this.speedultiplier) * time.secondsPassed;
-        this.position.y += (this.velocity.y * this.baseSpeedTime * this.speedultiplier) * time.secondsPassed;
+        this.position.x += this.velocity.x * this.baseSpeedTime * this.speedultiplier * time.secondsPassed;
+        this.position.y += this.velocity.y * this.baseSpeedTime * this.speedultiplier * time.secondsPassed;
     }
 
     private updateAnimation(time: TimeFrame) {
@@ -120,7 +207,7 @@ export class Bomberman extends GameEntity {
             frame,
             Math.floor(this.position.x - camera.position.x),
             Math.floor(this.position.y - camera.position.y),
-            [this.direction === DIRECTION.RIGHT ? -1 : 1, 1],
+            [this.direction === Direction.Right ? -1 : 1, 1],
         );
     }
 }
