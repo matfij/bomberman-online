@@ -3,11 +3,12 @@ import { GameEntity } from '../../engine/Entity';
 import { drawTile } from '../../engine/context';
 import { TimeFrame } from '../../engine/definitions/types';
 import { TILE_SIZE } from '../constants/game';
-import { TILE_MAP } from '../constants/levelData';
+import { COLLISION_MAP, MAP_MAX_SIZE, TILE_MAP } from '../constants/levelData';
 
 export class LevelMap extends GameEntity {
-    private readonly tileMap = [...TILE_MAP];
-    private stageImage = new OffscreenCanvas(1024, 1024);
+    readonly tileMap = [...TILE_MAP];
+    readonly collisionMap = [...COLLISION_MAP];
+    private stageImage = new OffscreenCanvas(MAP_MAX_SIZE, MAP_MAX_SIZE);
     image: HTMLImageElement;
 
     constructor() {

@@ -2,8 +2,9 @@ import { Camera } from '../../engine/Camera';
 import { GameEntity } from '../../engine/Entity';
 import { drawFrameOrigin } from '../../engine/context';
 import { Point, TimeFrame, Velocity } from '../../engine/definitions/types';
-import { isDown, isLeft, isRight, isUp } from '../../engine/inputHandler';
+import { isControlPressed, isDown, isLeft, isRight, isUp } from '../../engine/inputHandler';
 import { BOMBERMAN_ANIMATIONS, BOMBERMAN_FRAMES, BombermanState, WALK_SPEED } from '../constants/bomberman';
+import { Control } from '../constants/controls';
 import { COUNTER_DIRECTIONS_LOOKUP, Direction, MOVEMENT_LOOKUP } from '../constants/entities';
 import { FRAME_TIME, TILE_SIZE } from '../constants/game';
 import { COLLISION_MAP, TileType } from '../constants/levelData';
@@ -19,11 +20,21 @@ export class Bomberman extends GameEntity {
     animation = BOMBERMAN_ANIMATIONS.moveAnimations[this.direction];
     currentState?: State<BombermanState>;
     states: Record<BombermanState, State<BombermanState>>;
-    collisionMap = [...COLLISION_MAP];
+    collisionMap: TileType[][];
+    bombAmount = 1;
+    availableBombs = this.bombAmount;
+    onBombPlaced: (point: Point, time: TimeFrame) => void;
 
-    constructor(position: Point, time: TimeFrame) {
+    constructor(
+        position: Point,
+        time: TimeFrame,
+        collisionMap: TileType[][],
+        onBombPlaced: (point: Point, time: TimeFrame) => void,
+    ) {
         super({ x: position.x * TILE_SIZE + TILE_SIZE / 2, y: position.y * TILE_SIZE + TILE_SIZE / 2 });
         this.image = document.querySelector<HTMLImageElement>('img#bomberman')!;
+        this.collisionMap = collisionMap;
+        this.onBombPlaced = onBombPlaced;
         this.states = {
             [BombermanState.IDLE]: {
                 type: BombermanState.IDLE,
@@ -64,12 +75,30 @@ export class Bomberman extends GameEntity {
     };
 
     private handleState = (): Velocity => {
+        if (isControlPressed(this.CONTROL_ID, Control.ACTION)) {
+            this.handleBombPlacement();
+        }
         const [dir, vel] = this.getMovement();
         this.animation = BOMBERMAN_ANIMATIONS.moveAnimations[dir];
         this.direction = dir;
         this.velocity = vel;
         return vel;
     };
+
+    private handleBombPlacement() {
+        if (this.availableBombs < 1) {
+            return;
+        }
+        const playerPoint: Point = {
+            x: Math.floor(this.position.x / TILE_SIZE),
+            y: Math.floor(this.position.y / TILE_SIZE),
+        };
+        if (this.collisionMap[playerPoint.y][playerPoint.x] !== TileType.Empty) {
+            return;
+        }
+        this.availableBombs -= 1;
+        this.onBombPlaced();
+    }
 
     private getMovement(): [Direction, Velocity] {
         if (isLeft(this.CONTROL_ID)) {
@@ -172,8 +201,8 @@ export class Bomberman extends GameEntity {
     private changeState(newState: BombermanState, time: TimeFrame) {
         this.currentState = this.states[newState];
         this.animationFrame = 0;
-        this.animationTimer = time.previous + +this.animation[this.animationFrame] * FRAME_TIME;
         this.currentState.init(time);
+        this.animationTimer = time.previous + +this.animation[this.animationFrame][1] * FRAME_TIME;
     }
 
     update(time: TimeFrame) {
@@ -188,7 +217,7 @@ export class Bomberman extends GameEntity {
     }
 
     private updateAnimation(time: TimeFrame) {
-        if (time.previous < this.animationTimer || isZero(this.velocity)) {
+        if (time.previous < this.animationTimer || this.currentState?.type === BombermanState.IDLE) {
             return;
         }
         this.animationFrame += 1;

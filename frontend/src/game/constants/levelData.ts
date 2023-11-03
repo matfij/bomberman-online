@@ -1,3 +1,7 @@
+import { TILE_SIZE } from './game';
+
+export const MAP_MAX_SIZE = 64 * TILE_SIZE;
+
 export enum TileType {
     Empty = 'Empty', // 59
     Wall = 'Wall', // 30
