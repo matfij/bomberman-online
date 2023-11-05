@@ -1,5 +1,5 @@
 import { Camera } from '../../engine/Camera';
-import { TimeFrame } from '../../engine/definitions/types';
+import { Point, TimeFrame } from '../../engine/definitions/types';
 
 export interface State<T> {
     type: T;
@@ -12,7 +12,8 @@ export interface Tile {
     column: number;
 }
 
-export interface Bomb {
-    update: (time: TimeFrame) => void;
-    draw: (context: CanvasRenderingContext2D, camera: Camera) => void;
+export interface FlameCell {
+    position: Point;
+    isVertical: boolean;
+    isLast: boolean;
 }

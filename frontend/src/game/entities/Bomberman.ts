@@ -22,17 +22,18 @@ export class Bomberman extends GameEntity {
     currentState?: State<BombermanState>;
     states: Record<BombermanState, State<BombermanState>>;
     collisionMap: TileType[][];
-    bombAmount = 1;
+    bombPower = 2;
+    bombAmount = 3;
     availableBombs = this.bombAmount;
-    onBombPlaced: (point: Point, time: TimeFrame, onBombExploded: (bomb: Bomb) => void) => void;
+    onBombPlaced: (
+        point: Point,
+        bombPower: number,
+        time: TimeFrame,
+        onBombExploded: (bomb: Bomb) => void,
+    ) => void;
     lastBombPosition?: Point;
 
-    constructor(
-        position: Point,
-        time: TimeFrame,
-        collisionMap: TileType[][],
-        onBombPlaced: (point: Point, time: TimeFrame) => void,
-    ) {
+    constructor(position: Point, time: TimeFrame, collisionMap: TileType[][], onBombPlaced: () => {}) {
         super({ x: position.x * TILE_SIZE + TILE_SIZE / 2, y: position.y * TILE_SIZE + TILE_SIZE / 2 });
         this.image = document.querySelector<HTMLImageElement>('img#bomberman')!;
         this.collisionMap = collisionMap;
@@ -99,7 +100,7 @@ export class Bomberman extends GameEntity {
             return;
         }
         this.availableBombs -= 1;
-        this.onBombPlaced(playerPoint, time, this.handleBombExploded);
+        this.onBombPlaced(playerPoint, this.bombPower, time, this.handleBombExploded);
         this.lastBombPosition = playerPoint;
     }
 

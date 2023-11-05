@@ -3,4 +3,4 @@ import { TileType } from '../constants/levelData';
 
 export const isZero = (point: Point): boolean => point.x === 0 && point.y === 0;
 
-export const isCollisionTile = (tile: TileType) => tile !== TileType.Empty;
+export const isCollisionTile = (tile: TileType) => ![TileType.Empty, TileType.Flame].find((t) => t === tile);
