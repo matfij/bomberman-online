@@ -6,6 +6,7 @@ export const WALK_SPEED = 40;
 export enum BombermanState {
     IDLE = 'idle',
     MOVING = 'moving',
+    DEAD = 'dead',
 }
 
 export const BOMBERMAN_FRAMES = new Map<string, FrameOrigin>([
@@ -152,6 +153,78 @@ export const BOMBERMAN_FRAMES = new Map<string, FrameOrigin>([
             originY: 15,
         },
     ],
+    [
+        'death-1',
+        {
+            dimensions: { sourceX: 10, sourceY: 30, sourceWidth: 21, sourceHeight: 20 },
+            originX: 10,
+            originY: 15,
+        },
+    ],
+    [
+        'death-2',
+        {
+            dimensions: { sourceX: 44, sourceY: 30, sourceWidth: 19, sourceHeight: 19 },
+            originX: 9,
+            originY: 15,
+        },
+    ],
+    [
+        'death-3',
+        {
+            dimensions: { sourceX: 75, sourceY: 30, sourceWidth: 22, sourceHeight: 20 },
+            originX: 11,
+            originY: 15,
+        },
+    ],
+    [
+        'death-4',
+        {
+            dimensions: { sourceX: 108, sourceY: 30, sourceWidth: 22, sourceHeight: 21 },
+            originX: 11,
+            originY: 15,
+        },
+    ],
+    [
+        'death-5',
+        {
+            dimensions: { sourceX: 142, sourceY: 31, sourceWidth: 20, sourceHeight: 20 },
+            originX: 10,
+            originY: 15,
+        },
+    ],
+    [
+        'death-6',
+        {
+            dimensions: { sourceX: 175, sourceY: 32, sourceWidth: 20, sourceHeight: 19 },
+            originX: 10,
+            originY: 15,
+        },
+    ],
+    [
+        'death-7',
+        {
+            dimensions: { sourceX: 207, sourceY: 33, sourceWidth: 21, sourceHeight: 19 },
+            originX: 11,
+            originY: 15,
+        },
+    ],
+    [
+        'death-8',
+        {
+            dimensions: { sourceX: 240, sourceY: 32, sourceWidth: 22, sourceHeight: 21 },
+            originX: 11,
+            originY: 15,
+        },
+    ],
+    [
+        'death-9',
+        {
+            dimensions: { sourceX: 273, sourceY: 32, sourceWidth: 22, sourceHeight: 21 },
+            originX: 11,
+            originY: 15,
+        },
+    ],
 ]);
 
 export const BOMBERMAN_ANIMATIONS = {
@@ -181,4 +254,20 @@ export const BOMBERMAN_ANIMATIONS = {
             ['move-down-2', 8],
         ],
     },
+    deathAnimations: [
+        ['death-1', 8],
+        ['death-2', 8],
+        ['death-1', 8],
+        ['death-2', 8],
+        ['death-1', 8],
+        ['death-2', 8],
+        ['death-1', 8],
+        ['death-4', 8],
+        ['death-5', 8],
+        ['death-6', 8],
+        ['death-7', 8],
+        ['death-8', 8],
+        ['death-9', 8],
+        ['death-9', -1],
+    ],
 };

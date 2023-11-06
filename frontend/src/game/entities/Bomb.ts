@@ -8,8 +8,8 @@ export class Bomb {
     position: Point;
     image: HTMLImageElement;
     animationFrame = 0;
-    animationTimer;
-    ttl;
+    animationTimer: number;
+    ttl: number;
     onEnd: (bomb: Bomb) => void;
 
     constructor(position: Point, time: TimeFrame, onEnd: (bomb: Bomb) => void) {
